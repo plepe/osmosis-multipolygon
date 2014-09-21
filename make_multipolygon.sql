@@ -18,13 +18,15 @@ begin
   -- first find all closed geometries in array and push into done
   for i in array_lower(src, 1)..array_upper(src, 1) loop
     if src[i] is null then
-      raise notice 'got null geometry, index %', i;
-    elsif (IsClosed(src[i])) and NPoints(src[i])>3 then
-      done:=array_append(done, ST_MakePolygon(src[i]));
-    elsif not ST_IsValid(src[i]) then
-      raise notice 'ignore invalid line %', i;
-    else
-      todo:=array_append(todo, src[i]);
+      -- raise notice 'got null geometry, index %', i;
+    elsif NPoints(src[i])>3 then
+      if (IsClosed(src[i])) then
+        done:=array_append(done, ST_MakePolygon(src[i]));
+      elsif not ST_IsValid(src[i]) then
+        raise notice 'ignore invalid line %', i;
+      else
+        todo:=array_append(todo, src[i]);
+      end if;
     end if;
   end loop;
 
