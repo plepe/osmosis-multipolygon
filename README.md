@@ -11,12 +11,13 @@ psql -f assemble_multipolygon.sql
 psql -f build_multipolygon.sql
 psql -f make_multipolygon.sql
 psql -f tags_merge.sql
+psql -f update.sql
 psql -f create.sql
 psql -f assemble.sql
 ```
 * The 'osmosisUpdate' database function will be overridden, so that changesets
   can be imported to the database and the multipolygons table will
-  automatically be updated. (NOT YET ADOPTED)
+  automatically be updated.
 
 HISTORY
 =======
