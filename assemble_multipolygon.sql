@@ -70,11 +70,6 @@ BEGIN
     tags:=tags_merge(tags, outer_tags);
   end if;
 
-  -- if no tags (beside 'type'), return
-  if array_upper(akeys(delete(tags, 'type')), 1)=0 then
-    return false;
-  end if;
-
   -- raise notice 'assemble_multipolygon(%)', id;
 
   -- okay, insert
