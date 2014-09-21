@@ -12,11 +12,11 @@ DECLARE
 BEGIN
 
   -- get list of outer members
-  outer_members:=(select to_intarray(member_id) from relation_members where relation_id=id and member_type='W' and member_role in ('outer', 'exclave') group by relation_id);
+  outer_members:=(select array_agg(member_id) from relation_members where relation_id=id and member_type='W' and member_role in ('outer', 'exclave') group by relation_id);
 
   -- no outer members? use all members without role as outer members
   if array_upper(outer_members, 1) is null then
-    outer_members:=(select to_intarray(member_id) from relation_members where relation_id=id and member_type='W' and member_role='' group by relation_id);
+    outer_members:=(select array_agg(member_id) from relation_members where relation_id=id and member_type='W' and member_role='' group by relation_id);
   end if;
 
   -- still no outer members? -> ignore
@@ -25,7 +25,7 @@ BEGIN
   end if;
 
   -- tags
-  tags:=rel_assemble_tags(id);
+  tags:=(select tags from relations where relations.id=id);
 
   -- check if type is correct
   if tags->'type' not in ('multipolygon', 'boundary') then
@@ -35,8 +35,8 @@ BEGIN
 
   -- generate multipolygon geometry
   geom:=build_multipolygon(
-    (select to_array(way_get_geom(outer_members[i])) from generate_series(1, array_upper(outer_members, 1)) i),
-    (select to_array(way_get_geom(member_id)) from relation_members where relation_id=id and member_type='W' and member_role in ('inner', 'enclave') group by relation_id));
+    (select array_agg((select linestring from ways where ways.id=outer_members[i])) from generate_series(1, array_upper(outer_members, 1)) i),
+    (select array_agg((select linestring from ways where ways.id=member_id)) from relation_members where relation_id=id and member_type='W' and member_role in ('inner', 'enclave') group by relation_id));
 
   -- of geometry is not valid, then return false
   if geom is null or ST_IsEmpty(geom) then
@@ -81,7 +81,7 @@ BEGIN
   -- raise notice 'assemble_multipolygon(%)', id;
 
   -- get members
-  select to_textarray(member_type || member_id) as ids, to_textarray(member_role) as roles into members from relation_members where relation_id=id group by relation_id;
+  select array_agg(member_type || member_id) as ids, array_agg(member_role) as roles into members from relation_members where relation_id=id group by relation_id;
 
   -- okay, insert
   insert into multipolygons
