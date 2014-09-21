@@ -24,3 +24,6 @@ HISTORY
 These scripts are based on some OpenStreetBrowser code, which added
 multipolygon support for the osmosis pgsimple database schema. See
 https://github.com/plepe/OpenStreetBrowser-database for details.
+
+It's actually pretty old code, which I'm not too proud of. But it does its job
+and maybe it can help someone.
