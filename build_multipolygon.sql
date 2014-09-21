@@ -22,7 +22,7 @@ begin
     return null;
   end if;
 
-  if not IsValid(outer_ways) then
+  if not ST_IsValid(outer_ways) then
     return outer_ways;
   end if;
 
