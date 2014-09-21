@@ -4,4 +4,4 @@ create table multipolygons (
   tags		hstore		null,
   primary key(id)
 );
-select AddGeometryColumn('multipolygons', 'way', 4326, 'GEOMETRY', 2);
+select AddGeometryColumn('multipolygons', 'geom', 4326, 'GEOMETRY', 2);
