@@ -41,7 +41,7 @@ begin
 
   for j in array_lower(keys, 1)..array_upper(keys, 1) loop
       collect:=collect|| (keys[j]=>
-        array_to_string(array_unique(split_semicolon(collect->keys[j])), ';'));
+        array_to_string(array_unique(string_to_array(collect->keys[j], ';')), ';'));
   end loop;
 
   return collect;
@@ -59,15 +59,6 @@ begin
 end;
 $$ language 'plpgsql';
 
-create or replace function split_semicolon(text)
-  returns text[]
-  as $$
-declare
-  str alias for $1;
-begin
-  return string_to_array(str, ';');
-end;
-$$ language 'plpgsql' immutable;
 CREATE OR REPLACE FUNCTION array_unique(text[])
 RETURNS text[]
 AS $$

@@ -42,6 +42,7 @@ Notes:
 ------
 * Tags of the outer ways will be mixed into the tags of the relation if the relation has no relevant tags and all outer ways have equal tags (not including non-relevant tags).
 * Relevant tags are all tags, short of 'source', 'created_by', 'fixme', …. For a full list see the variable `non_relevant_tags` at the beginning of the `assemble_multipolygon` function.
+* If a (non relevant) tag is present on several objects with different value, those will be merged by semi colons, e.g. `created_by=>"Potlatch 0.10b;Merkaartor 0.12"`.
 
 HISTORY
 =======
