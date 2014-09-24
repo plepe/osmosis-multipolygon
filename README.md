@@ -34,13 +34,13 @@ Table colums:
 name | type | description
 -----|------|-------------
 id | *bigint* | ID of the relation which defines this multipolygon
-tags | *hstore* | A hstore (a key-value datatype) containing all tags of the multipolygon, either of the relation itself or mixed with the tags of the outer polygon(s) (see has_outer_tags).
-has_outer_tags | *boolean* | A boolean indicating whether the tags of the relation itself has been used (false) or if the tags of the outer polygon(s) has been mixed into it.
+tags | *hstore* | A hstore (a key-value datatype) containing all tags of the multipolygon, either of the relation itself or mixed with the tags of the outer way(s) (see has_outer_tags).
+has_outer_tags | *boolean* | A boolean indicating whether the tags of the relation itself has been used (false) or if the tags of the outer ways(s) has been mixed into it.
 geom | *geometry* | The geometry of the object.
 
 Notes:
 ------
-* Tags of (the) outer polygon(s) will be mixed into the tags of the relation if the relation has no relevant tags and all outer polygons have equal tags (not including non-relevant tags).
+* Tags of the outer ways will be mixed into the tags of the relation if the relation has no relevant tags and all outer ways have equal tags (not including non-relevant tags).
 * Relevant tags are all tags, short of 'source', 'created_by', 'fixme', …. For a full list see the variable `non_relevant_tags` at the beginning of the `assemble_multipolygon` function.
 
 HISTORY
