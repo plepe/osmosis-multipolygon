@@ -9,6 +9,7 @@ DECLARE
   tmp hstore;
   outer_members bigint[];
   members record;
+  has_outer_tags boolean := false;
 BEGIN
 
   -- get list of outer members
@@ -68,6 +69,7 @@ BEGIN
     
     -- else use tags from outer polygon(s)
     tags:=tags_merge(tags, outer_tags);
+    has_outer_tags := true;
   end if;
 
   -- raise notice 'assemble_multipolygon(%)', id;
@@ -77,6 +79,7 @@ BEGIN
     values (
       id,
       tags,
+      has_outer_tags,
       geom
     );
 
