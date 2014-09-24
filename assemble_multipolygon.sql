@@ -5,11 +5,13 @@ DECLARE
   geom geometry;
   tags hstore;
   outer_tags hstore;
+  outer_tags_relevant hstore;
   outer_equal boolean;
   tmp hstore;
   outer_members bigint[];
   members record;
   has_outer_tags boolean := false;
+  non_relevant_tags text[] := '{source,source:ref,source_ref,note,comment,created_by,converted_by,fixme,FIXME,description,attribution}'::text[];
 BEGIN
 
   -- get list of outer members
@@ -47,8 +49,10 @@ BEGIN
   -- check if all outer polygons are equal
   outer_equal=true;
   outer_tags=(select ways.tags from ways where ways.id=outer_members[1]);
+  outer_tags_relevant := delete(outer_tags, non_relevant_tags);
+
   for i in 2..array_upper(outer_members, 1) loop
-    if (select ways.tags from ways where ways.id=outer_members[i])!=outer_tags then
+    if (select delete(ways.tags, non_relevant_tags) from ways where ways.id=outer_members[i])!=outer_tags_relevant then
       outer_equal=false;
     end if;
   end loop;
@@ -58,7 +62,7 @@ BEGIN
   -- tags and delete outer way(s) from multipolygons
 
   -- delete not relevant tags ('created_by' has already been removed)
-  tmp:=delete(tags, Array['type', 'source']);
+  tmp:=delete(delete(tags, non_relevant_tags), 'type');
 
   -- multipolygon has no relevant tags
   if array_upper(akeys(tmp), 1) is null then
