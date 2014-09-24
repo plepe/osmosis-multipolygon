@@ -23,17 +23,20 @@ DATA
 ====
 The 'multipolygons' table looks like this:
 
-id *bigint* | tags *hstore* | has_outer_tags *boolean* | geom *geometry*
+id | tags | has_outer_tags | geom
 ------------|---------------|--------------------------|-----------------
  75 | "name"=>"Untere Alte Donau", "type"=>"multipolygon", "water"=>"oxbow", "natural"=>"water" | f | 0103000020E61000000...
  11154 | "name"=>"Rossauer Kaserne", "type"=>"multipolygon", "source"=>"wien.gv.at", "alt_name"=>"Rudolfskaserne", "building"=>"yes", "military"=>"barracks", "wikipedia:de"=>"Rossauer Kaserne" | f | 0103000020E61000000...
- 27945 | "name"=>"HLTW13", "type"=>"multipolygon", "amenity"=>"school", "buildi
- ng"=>"yes", "created_by"=>"Potlatch 0.10b" | t | 0103000020E61000000...
+ 27945 | "name"=>"HLTW13", "type"=>"multipolygon", "amenity"=>"school", "building"=>"yes", "created_by"=>"Potlatch 0.10b" | t | 0103000020E61000000...
 
-* id ... ID of the relation which defines this multipolygon
-* tags ... An hstore (a key-value datatype) containing all tags of the multipolygon, either of the relation itself or mixed with the tags of the outer polygon(s) (see has_outer_tags).
-* has_outer_tags ... A boolean indicating whether the tags of the relation itself has been used (false) or if the tags of the outer polygon(s) has been mixed into it.
-* geometry ... The geometry of the object.
+Table colums:
+
+name | type | description
+-----|------|-------------
+id | *bigint* | ID of the relation which defines this multipolygon
+tags | *hstore* | A hstore (a key-value datatype) containing all tags of the multipolygon, either of the relation itself or mixed with the tags of the outer polygon(s) (see has_outer_tags).
+has_outer_tags | *boolean* | A boolean indicating whether the tags of the relation itself has been used (false) or if the tags of the outer polygon(s) has been mixed into it.
+geom | *geometry* | The geometry of the object.
 
 HISTORY
 =======
