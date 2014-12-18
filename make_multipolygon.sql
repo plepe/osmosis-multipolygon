@@ -53,6 +53,11 @@ begin
     end loop;
   end if;
 
+  -- if done is empty, return null
+  if array_upper(done, 1) is null then
+    return null;
+  end if;
+
   -- we are done :)
   return ST_Collect(done);
 end;
