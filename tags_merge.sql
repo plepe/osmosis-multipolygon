@@ -29,7 +29,7 @@ begin
 	  t:=substring(t||';'||(src[i]->keys[j]), 0, 4096);
 	end if;
 
-	collect:=collect|| (keys[j]=>t);
+	collect:=collect|| hstore(keys[j], t);
       end loop;
     end if;
   end loop;
@@ -40,7 +40,7 @@ begin
   end if;
 
   for j in array_lower(keys, 1)..array_upper(keys, 1) loop
-      collect:=collect|| (keys[j]=>
+      collect:=collect|| hstore(keys[j],
         array_to_string(array_unique(string_to_array(collect->keys[j], ';')), ';'));
   end loop;
 
