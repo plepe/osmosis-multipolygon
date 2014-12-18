@@ -1,8 +1,10 @@
-create or replace function make_multipolygon(geometry[])
+create or replace function make_multipolygon(
+  rel_id bigint,
+  src_id bigint[],
+  src_geom geometry[])
 returns geometry
 as $$
 declare
-  src		alias for $1;
   todo		geometry[];
   done		geometry[];
   cur		geometry;
@@ -11,21 +13,21 @@ begin
   done:=Array[]::geometry[];
 
   -- empty array
-  if src is null or array_lower(src, 1) is null then
+  if src_geom is null or array_lower(src_geom, 1) is null then
     return null;
   end if;
 
   -- first find all closed geometries in array and push into done
-  for i in array_lower(src, 1)..array_upper(src, 1) loop
-    if src[i] is null then
-      -- raise notice 'got null geometry, index %', i;
-    elsif ST_NPoints(src[i])>3 then
-      if (ST_IsClosed(src[i])) then
-        done:=array_append(done, ST_MakePolygon(src[i]));
-      elsif not ST_IsValid(src[i]) then
-        raise notice 'ignore invalid line %', i;
+  for i in array_lower(src_geom, 1)..array_upper(src_geom, 1) loop
+    if src_geom[i] is null then
+      raise notice 'MP %, way %: got null geometry', rel_id, src_id[i];
+    elsif ST_NPoints(src_geom[i])>3 then
+      if (ST_IsClosed(src_geom[i])) then
+        done:=array_append(done, ST_MakePolygon(src_geom[i]));
+      elsif not ST_IsValid(src_geom[i]) then
+        raise notice 'MP %, way %: ignore invalid line', rel_id, src_id[i];
       else
-        todo:=array_append(todo, src[i]);
+        todo:=array_append(todo, src_geom[i]);
       end if;
     end if;
   end loop;
@@ -34,7 +36,7 @@ begin
   begin
     cur:=ST_LineMerge(ST_GeomFromEWKT(ST_AsEWKT(ST_Collect(todo))));
   exception when others then
-    raise notice 'error merging lines';
+    raise notice 'MP %: error merging lines', rel_id;
     return null;
   end;
 

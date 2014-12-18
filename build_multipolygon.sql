@@ -1,4 +1,9 @@
-create or replace function build_multipolygon(geometry[], geometry[])
+create or replace function build_multipolygon(
+  rel_id bigint,
+  outer_ids bigint[],
+  outer_geom geometry[],
+  inner_ids bigint[],
+  inner_geom geometry[])
 returns geometry
 as $$
 declare
@@ -11,12 +16,12 @@ begin
     return null;
   end if;
 
-  if coalesce(array_upper($2, 1), 0)>256 then
-    raise notice 'multipolygon consists of % (more then 256) inner members ... ignore', coalesce(array_upper($1, 1), 0)+coalesce(array_upper($2, 1), 0);
+  if coalesce(array_upper(inner_geom, 1), 0)>256 then
+    raise notice 'MP % consists of % (more then 256) inner members ... ignore', rel_id, coalesce(array_upper(outer_geom, 1), 0)+coalesce(array_upper(inner_geom, 1), 0);
     return null;
   end if;
 
-  outer_ways:=make_multipolygon($1);
+  outer_ways:=make_multipolygon(rel_id, outer_ids, outer_geom);
 
   if outer_ways is null then
     return null;
@@ -26,8 +31,8 @@ begin
     return outer_ways;
   end if;
 
-  if $2 is not null then
-    inner_ways:=make_multipolygon($2);
+  if inner_geom is not null then
+    inner_ways:=make_multipolygon(rel_id, inner_ids, inner_geom);
   end if;
 
   if inner_ways is null then
@@ -44,7 +49,7 @@ begin
 	outer_ways:=ST_Difference(outer_ways, next);
       exception 
         when others then
-	  raise notice 'multipolygon got an error when substracting inner polygons (inner %)', i;
+	  raise notice 'MP % got an error when substracting inner polygons (inner %)', rel_id, i;
 	  return null;
       end;
     end if;

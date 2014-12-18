@@ -7,6 +7,7 @@ INSTALL
   linestrings.
 * Load the database functions:
 ```sh
+psql -f upgrade.sql # skip for new installs
 psql -f assemble_multipolygon.sql
 psql -f build_multipolygon.sql
 psql -f make_multipolygon.sql

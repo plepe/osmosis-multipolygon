@@ -1,7 +1,6 @@
-CREATE OR REPLACE FUNCTION assemble_multipolygon(bigint) RETURNS boolean AS $$
+CREATE OR REPLACE FUNCTION assemble_multipolygon(id bigint) RETURNS boolean AS $$
 #variable_conflict use_variable
 DECLARE
-  id alias for $1;
   geom geometry;
   tags hstore;
   outer_tags hstore;
@@ -9,6 +8,7 @@ DECLARE
   outer_equal boolean;
   tmp hstore;
   outer_members bigint[];
+  inner_members bigint[];
   members record;
   has_outer_tags boolean := false;
   non_relevant_tags text[] := '{source,source:ref,source_ref,note,comment,created_by,converted_by,fixme,FIXME,description,attribution}'::text[];
@@ -27,6 +27,9 @@ BEGIN
     return false;
   end if;
 
+  -- get list of inner members
+  inner_members:=(select array_agg(member_id) from relation_members where relation_id=id and member_type='W' and member_role in ('inner', 'enclave') group by relation_id);
+
   -- tags
   tags:=(select relations.tags from relations where relations.id=id);
 
@@ -38,8 +41,11 @@ BEGIN
 
   -- generate multipolygon geometry
   geom:=build_multipolygon(
+    id,
+    outer_members,
     (select array_agg((select linestring from ways where ways.id=outer_id)) from unnest(outer_members) outer_id),
-    (select array_agg((select linestring from ways where ways.id=member_id)) from relation_members where relation_id=id and member_type='W' and member_role in ('inner', 'enclave') group by relation_id));
+    inner_members,
+    (select array_agg((select linestring from ways where ways.id=inner_id)) from unnest(inner_members) inner_id));
 
   -- of geometry is not valid, then return false
   if geom is null or ST_IsEmpty(geom) then
