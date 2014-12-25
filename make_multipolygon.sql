@@ -41,7 +41,7 @@ begin
   if array_length(todo, 1) is not null then
     -- merge all other geometries together
     begin
-      cur:=ST_LineMerge(ST_GeomFromEWKT(ST_AsEWKT(ST_Collect(todo))));
+      cur:=ST_LineMerge(ST_Collect(todo));
       exception when others then
         raise notice 'MP %: error merging lines', rel_id;
         return null;
