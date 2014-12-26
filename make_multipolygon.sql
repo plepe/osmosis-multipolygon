@@ -24,7 +24,7 @@ begin
   for i in array_lower(src_geom, 1)..array_upper(src_geom, 1) loop
     if src_geom[i] is null then
       -- raise notice 'got null geometry, index %', i;
-    elsif not ST_IsValid(src_geom[i]) then
+    elsif ST_NPoints(src_geom[i])<2 or not ST_IsValid(src_geom[i]) then
       raise notice 'MP %, way %: ignore invalid line', rel_id, src_id[i];
     elsif ST_IsClosed(src_geom[i]) then
       if ST_NPoints(src_geom[i])>3 then
