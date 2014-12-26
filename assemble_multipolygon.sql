@@ -80,6 +80,9 @@ BEGIN
     -- else use tags from outer polygon(s)
     tags:=tags_merge(tags, outer_tags);
     has_outer_tags := true;
+  elsif tmp = outer_tags_relevant then
+    -- tags of relation and outer ways are equal -> has_outer_tags is set to
+    -- false, but outer ways should be hidden anyway
   else
     -- set outer_members to null, so that the column will not accidentially be
     -- filled

@@ -29,6 +29,7 @@ id | tags | has_outer_tags | hide_outer_ways | geom
  75 | "name"=>"Untere Alte Donau", "type"=>"multipolygon", "water"=>"oxbow", "natural"=>"water" | f | null | 0103000020E61000000...
  11154 | "name"=>"Rossauer Kaserne", "type"=>"multipolygon", "source"=>"wien.gv.at", "alt_name"=>"Rudolfskaserne", "building"=>"yes", "military"=>"barracks", "wikipedia:de"=>"Rossauer Kaserne" | f | null | 0103000020E61000000...
  27945 | "name"=>"HLTW13", "type"=>"multipolygon", "amenity"=>"school", "building"=>"yes", "created_by"=>"Potlatch 0.10b" | t | {26350742} | 0103000020E61000000...
+ 121006 | "type"=>"multipolygon", "source"=>"ViennaGIS", "building"=>"yes" | f | {33720939} | 0103000020E61000000...
 
 Table colums:
 
@@ -37,7 +38,7 @@ name | type | description
 id | *bigint* | ID of the relation which defines this multipolygon
 tags | *hstore* | A hstore (a key-value datatype) containing all tags of the multipolygon, either of the relation itself or mixed with the tags of the outer way(s) (see has_outer_tags).
 has_outer_tags | *boolean* | A boolean indicating whether the tags of the relation itself has been used (false) or if the tags of the outer ways(s) has been mixed into it.
-hide_outer_ways | bigint[] | Contains list of IDs of the outer ways, if they should be hidden from rendering (because the tags were taken from these ways). `null`, if no ways should be hidden.
+hide_outer_ways | bigint[] | Contains list of IDs of the outer ways, if they should be hidden from rendering (because the tags were taken from these ways (has_outer_tags=true) or the tags of the outer ways and the relation itself are equal (has_outer_tags=false)). `null`, if no ways should be hidden.
 geom | *geometry* | The geometry of the object.
 
 Notes:
