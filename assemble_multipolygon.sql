@@ -80,6 +80,10 @@ BEGIN
     -- else use tags from outer polygon(s)
     tags:=tags_merge(tags, outer_tags);
     has_outer_tags := true;
+  else
+    -- set outer_members to null, so that the column will not accidentially be
+    -- filled
+    outer_members = null;
   end if;
 
   -- raise notice 'assemble_multipolygon(%)', id;
@@ -90,6 +94,7 @@ BEGIN
       id,
       tags,
       has_outer_tags,
+      outer_members,
       geom
     );
 
